@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://120.78.165.238/static/module/prism.css">
+<body>
+    <div class="container">
+        <div class="jumbotron" style="margin-top: 50px;">
+            <h1 style="margin-bottom: 20px;font-weight: bolder">代码片段提交成功！</h1>
+            <button type="button" class="btn btn-success" onclick="location.href='http://localhost:9000/code'">回后台</button>
+        </div>
+        <div id="code">
+            <h3>{{ code.title }}</h3>
+        </div>
+        <br>
+        <div>
+            {{code.body_html | safe}}
+        </div>
+    </div>
+<script src="http://120.78.165.238/static/module/prism.js"></script>
+</body>
+</html>
