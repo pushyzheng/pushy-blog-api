@@ -19,6 +19,10 @@ def increase_like():
         }
     )
 
+@app.route('/.well-known/acme-challenge/5mrqWpBvFNFRp231Ks33dkdext9fMKO3KIdoMHlGodQ')
+def ssl_verify():
+	return '5mrqWpBvFNFRp231Ks33dkdext9fMKO3KIdoMHlGodQ.8F7sdagzAk7DY5HKvzUL1xkmnY64VnXeQFRPzLJgzi8'
+
 @app.errorhandler(404)
 def not_found(e):
-    return jsonify(error='invalid api key')
+	return jsonify(error='invalid api key')

@@ -51,7 +51,8 @@ class Post(db.Model):
             'post_id':self.post_id,
             'cover_url':self.cover_url,
             'create_time':self.create_time.strftime('%Y-%m-%d %H:%M:%S')[:-9],
-            'catagory':[each.item for each in self.catagory]
+            'catagory':[each.item for each in self.catagory],
+            'post_url':self.post_url
         }
 
     @staticmethod
@@ -75,26 +76,26 @@ class Post(db.Model):
         self.body_html = re.sub('<a','<a target="_blank"',self.body_html)
         self.body_html = re.sub('<pre><code>', '<pre><code class="language-python" style="background-color:#F7F7F7">', self.body_html)
         self.body_html = re.sub('<pre><code class="', '<pre class=" language-python" style="background-color:#F7F7F7"><code class=" language-', self.body_html)
-        self.body_html = re.sub('<img src="pic/','<img class="mdui-img-fluid" src="http://static.pic/pushy.site/',self.body_html)
+        self.body_html = re.sub('<img src="pic/','<img class="mdui-img-fluid" src="https://static.pushy.site/pics/',self.body_html)
 
     @staticmethod
     def create_url_qrcode(self, value, oldvalue, initiator):
-        path = '/static/pic/{}_qrcode.jpg'.format(str(self.post_id))
+        path = '/static/pics/{}_qrcode.jpg'.format(str(value))
         qr = qrcode.QRCode(
             version=5,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=10,
             border=4,
         )
-        post_site_url = 'http://blog.pushy.site/posts/' + str(self.post_id)
+        post_site_url = 'https://pushy.site/posts/' + str(value)
         qr.add_data(post_site_url)
         qr.make(fit=True)
         img = qr.make_image()
         img.save(path)
-        self.post_url = 'http://static.pushy.site/pic/{}_qrcode'.format(str(self.post_id))
+        self.post_url = 'https://static.pushy.site/pics/{}_qrcode.jpg'.format(str(value))
 
 db.event.listen(Post.body,'set',Post.change_markdown_to_html)
-db.event.listen(Post.cover_url,'set',Post.create_url_qrcode)
+db.event.listen(Post.post_id,'set',Post.create_url_qrcode)
 
 class Catagory(db.Model):
     __tablename__ = 'catagory'
@@ -140,7 +141,7 @@ class Code(db.Model):
         self.body_html = re.sub('<a','<a target="_blank"',self.body_html)
         self.body_html = re.sub('<pre><code>', '<pre style="font-size:15px;cursor:text;background-color:#F7F7F7;"><code class="language-python">', self.body_html)
         self.body_html = re.sub('<pre><code class="', '<pre class=" language-python" style="font-size:15px;cursor:text;background-color:#F7F7F7"><code class=" language-', self.body_html)
-        self.body_html = re.sub('<img src="pic/','<img class="mdui-img-fluid" src="http://static.pushy.site/pic/',self.body_html)
+        self.body_html = re.sub('<img src="pic/','<img class="mdui-img-fluid" src="http://static.pushy.site/pics/',self.body_html)
 
 db.event.listen(Code.body,'set',Code.change_markdown_to_html)
 

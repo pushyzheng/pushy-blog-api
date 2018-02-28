@@ -14,4 +14,4 @@ SQLALCHEMY_DATABASE_URI = "{}+{}://{}:{}@{}:{}/{}?charset=utf8".format(DIALECT, 
                                                                        DATABASE)
 FLASKY_POSTS_PER_PAGE = 5
 FLASKY_CODE_PER_PAGE = 10
-UPLOADED_PICSET_DEST = '/static/pic'
+UPLOADED_PICSET_DEST = '/static/pics'

@@ -74,7 +74,7 @@ def write_post_api():
             )
         post_id = int(time.time())
         filename = picSet.save(file, name='cover-{}'.format(post_id) + '.')
-        cover_url = 'http://static.pushy.site/pic/{}'.format(filename)
+        cover_url = 'https://static.pushy.site/pics/{}'.format(filename)
         new_post = Post(title=title, body=content, post_id=post_id, cover_url=cover_url)
         db.session.add(new_post)
         db.session.commit()
