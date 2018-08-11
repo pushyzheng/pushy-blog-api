@@ -1,11 +1,13 @@
 # encoding:utf-8
 from . import cg
-from app import db, app
-from app.models import Post, Catagory
+from app import app
+from app.models import Catagory
 from operator import itemgetter
-from flask import jsonify, request
+from flask import request
+from restful import *
 
 @cg.route('/<item>')
+@restful
 def return_catagory_info(item):
     page = request.args.get('page', 1, type=int)
     pagination = Catagory.query.filter_by(item=item).order_by(Catagory.create_time.desc()).paginate(
@@ -13,11 +15,10 @@ def return_catagory_info(item):
         error_out=False
     )
     item_list = pagination.items
-    return jsonify(
-        data=[each.post.return_dict() for each in item_list]
-    )
+    return [each.post.return_dict() for each in item_list]
 
-@cg.route('/return_all_item')
+@cg.route('/items')
+@restful
 def return_all_no_repeat_item():
     all_item_list = [each.item for each in Catagory.query.all()]
     # 通过转换为集合再转换为列表去重：
@@ -29,8 +30,5 @@ def return_all_no_repeat_item():
         dict['count'] = all_item_list.count(each)
         data.append(dict)
     # 对标签的个数通过sorted方法更具count键进行降序操作：
-    sorted_by_count_list = sorted(data, key=itemgetter('count'), reverse=True)
-    return jsonify(
-        data = sorted_by_count_list
-    )
+    return sorted(data, key=itemgetter('count'), reverse=True)
 

@@ -56,29 +56,6 @@ class Post(db.Model):
         }
 
     @staticmethod
-    def change_markdown_to_html(self, value, oldvalue, initiator):
-        #允许存在的标签：
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p','img']
-        #标签允许的参数：
-        attrs = {
-            'img': ['src'],
-            '*':['class'],
-            'a':['href']
-        }
-        self.body_html = bleach.linkify(
-            bleach.clean(markdown(value, output_format='html',extensions=['markdown.extensions.extra']),
-                         tags=allowed_tags,
-                         strip=True,attributes=attrs)
-        )
-        self.body_html = re.sub('</h2>','</h2><div class="mdui-divider post-title-divider"></div>',self.body_html)
-        self.body_html = re.sub('<a','<a target="_blank"',self.body_html)
-        self.body_html = re.sub('<pre><code>', '<pre><code class="language-python" style="background-color:#F7F7F7">', self.body_html)
-        self.body_html = re.sub('<pre><code class="', '<pre class=" language-python" style="background-color:#F7F7F7"><code class=" language-', self.body_html)
-        self.body_html = re.sub('<img src="pic/','<img class="mdui-img-fluid" src="https://static.pushy.site/pics/',self.body_html)
-
-    @staticmethod
     def create_url_qrcode(self, value, oldvalue, initiator):
         path = '/static/pics/{}_qrcode.jpg'.format(str(value))
         qr = qrcode.QRCode(
@@ -93,9 +70,6 @@ class Post(db.Model):
         img = qr.make_image()
         img.save(path)
         self.post_url = 'https://static.pushy.site/pics/{}_qrcode.jpg'.format(str(value))
-
-db.event.listen(Post.body,'set',Post.change_markdown_to_html)
-db.event.listen(Post.post_id,'set',Post.create_url_qrcode)
 
 class Catagory(db.Model):
     __tablename__ = 'catagory'
