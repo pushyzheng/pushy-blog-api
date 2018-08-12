@@ -56,13 +56,10 @@ def write_post_api():
     content = request.form.get('content')
     catagory = request.form.get('catagory')
     file = request.files.get('file')
-    # if not (title and content and catagory and file):
-    if not (title and content and catagory):
+    if not (title and content and catagory and file):
         raise BadRequestError("The request body is not present")
     post_id = int(time.time())
-    # filename = picSet.save(file, name='cover-{}'.format(post_id) + '.')
-    import uuid
-    filename = str(uuid.uuid4())
+    filename = picSet.save(file, name='cover-{}'.format(post_id) + '.')
     cover_url = 'https://static.pushy.site/pics/{}'.format(filename)
     headers = {
         'Content-Type': 'text/plain'

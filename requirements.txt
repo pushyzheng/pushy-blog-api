@@ -1,3 +1,9 @@
 flask_sqlalchemy
 flask
 flask_uploads
+flask_cors
+bleach
+qrcode
+markdown
+requests
+pymysql
