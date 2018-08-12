@@ -78,9 +78,9 @@ def write_post_api():
 @post.route('/update', methods=['POST'])
 @restful
 def update_post_api():
-    title = request.json.get('title')
-    content = request.json.get('content')
-    post_id = request.json.get('post_id')
+    title = request.form.get('title')
+    content = request.form.get('content')
+    post_id = request.form.get('post_id')
     if not (title and content and post_id):
         raise BadRequestError('The request body is not present')
     headers = {
