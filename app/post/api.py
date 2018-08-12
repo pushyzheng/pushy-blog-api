@@ -60,12 +60,14 @@ def write_post_api():
     if not (title and content and catagory):
         raise BadRequestError("The request body is not present")
     post_id = int(time.time())
-    filename = picSet.save(file, name='cover-{}'.format(post_id) + '.')
+    # filename = picSet.save(file, name='cover-{}'.format(post_id) + '.')
+    import uuid
+    filename = str(uuid.uuid4())
     cover_url = 'https://static.pushy.site/pics/{}'.format(filename)
     headers = {
         'Content-Type': 'text/plain'
     }
-    body_html = requests.post("https://api.github.com/markdown/raw", content, headers=headers).text
+    body_html = requests.post("https://api.github.com/markdown/raw", content.encode('utf-8'), headers=headers).text
     new_post = Post(title=title, body=content, post_id=post_id, cover_url=cover_url, body_html=body_html)
     db.session.add(new_post)
     db.session.commit()

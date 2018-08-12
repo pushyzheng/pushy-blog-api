@@ -1,6 +1,6 @@
 # encoding:utf-8
 from functools import wraps
-from flask import Flask, jsonify
+from flask import jsonify
 import copy
 import http
 
@@ -17,7 +17,6 @@ def restful(func):
         try:
             data = func(*args, **kwargs)
             resp = copy.copy(response_template)
-            resp['error_code'] = 0
             resp['data'] = data
             return jsonify(resp)
         except UnauthorizedError as e:
