@@ -7,3 +7,5 @@ qrcode
 markdown
 requests
 pymysql
+flask_script
+flask_migrate

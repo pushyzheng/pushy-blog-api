@@ -82,12 +82,16 @@ def update_post_api():
     content = request.json.get('content')
     post_id = request.json.get('post_id')
     if not (title and content and post_id):
-        raise BadRequestError("The request body is not present")
-    update_time = datetime.now()
+        raise BadRequestError('The request body is not present')
+    headers = {
+        'Content-Type': 'text/plain'
+    }
+    body_html = requests.post("https://api.github.com/markdown/raw", content.encode('utf-8'), headers=headers).text
     post = Post.query.filter_by(post_id=post_id).first()
     post.title = title
     post.body = content
-    post.update_time = update_time
+    post.body_html = body_html
+    post.update_time = datetime.now()
     db.session.commit()
     return post.return_dict()
 
