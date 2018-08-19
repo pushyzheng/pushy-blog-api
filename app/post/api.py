@@ -19,6 +19,31 @@ def return_page_posts():
     posts = pagination.items
     return [each.return_dict() for each in posts]
 
+@post.route('/', methods=['PUT'])
+@restful
+def update_post():
+    title = request.json.get('title')
+    body = request.json.get('body')
+    post_id = request.json.get('post_id')
+    print(title)
+    print(body)
+    print(post_id)
+    if not (title and body and post_id):
+        raise BadRequestError('The request body is not present')
+    post = Post.query.filter_by(post_id=post_id).first()
+    if not post:
+        raise NotFoundError("No this post")
+    headers = {
+        'Content-Type': 'text/plain'
+    }
+    body_html = requests.post("https://api.github.com/markdown/raw", body.encode('utf-8'), headers=headers).text
+    post.title = title
+    post.body = body
+    post.body_html = body_html
+    post.update_time = datetime.now()
+    db.session.commit()
+    return post.return_dict()
+
 @post.route('/<post_id>', methods=['GET', 'DELETE'])
 @restful
 def return_one_post(post_id):
@@ -52,15 +77,13 @@ def return_all_posts():
 @post.route('/write', methods=['POST'])
 @restful
 def write_post_api():
-    title = request.form.get('title')
-    content = request.form.get('content')
-    catagory = request.form.get('catagory')
-    file = request.files.get('file')
-    if not (title and content and catagory and file):
+    title = request.json.get('title')
+    content = request.json.get('content')
+    catagory = request.json.get('catagory')
+    cover_url = request.json.get('url')
+    if not (title and content and catagory and cover_url):
         raise BadRequestError("The request body is not present")
     post_id = int(time.time())
-    filename = picSet.save(file, name='cover-{}'.format(post_id) + '.')
-    cover_url = 'https://static.pushy.site/pics/{}'.format(filename)
     headers = {
         'Content-Type': 'text/plain'
     }
@@ -69,32 +92,11 @@ def write_post_api():
     db.session.add(new_post)
     db.session.commit()
     # 将文章的标签存入Catagory模型的item字段中：
-    for each in catagory.split(','):
+    for each in catagory:
         new_item = Catagory(item=each, post_id=post_id)
         db.session.add(new_item)
     db.session.commit()
     return new_post.return_dict()
-
-@post.route('/update', methods=['POST'])
-@restful
-def update_post_api():
-    title = request.form.get('title')
-    content = request.form.get('content')
-    post_id = request.form.get('post_id')
-    if not (title and content and post_id):
-        raise BadRequestError('The request body is not present')
-    headers = {
-        'Content-Type': 'text/plain'
-    }
-    body_html = requests.post("https://api.github.com/markdown/raw", content.encode('utf-8'), headers=headers).text
-    post = Post.query.filter_by(post_id=post_id).first()
-    post.title = title
-    post.body = content
-    post.body_html = body_html
-    post.update_time = datetime.now()
-    db.session.commit()
-    return post.return_dict()
-
 
 @post.route('/write/pic', methods=['POST'])
 @restful

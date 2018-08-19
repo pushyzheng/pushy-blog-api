@@ -1,10 +1,27 @@
 # encoding:utf-8
 from . import cg
-from app import app
-from app.models import Catagory
+from app import app, db
+from app.models import Catagory, Tag
 from operator import itemgetter
 from flask import request
 from restful import *
+
+@cg.route('/tags')
+@restful
+def return_all_category():
+    return [item.return_dict() for item in Tag.query.all()]
+
+
+@cg.route('/tags', methods=['POST'])
+@restful
+def add_tag():
+    name = request.json['name']
+    if not name:
+        raise BadRequestError("The request body is not present")
+    tag = Tag(name=name)
+    db.session.add(tag)
+    db.session.commit()
+    return tag.return_dict()
 
 @cg.route('/<item>')
 @restful

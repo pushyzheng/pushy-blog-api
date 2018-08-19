@@ -71,6 +71,18 @@ class Post(db.Model):
         img.save(path)
         self.post_url = 'https://static.pushy.site/pics/{}_qrcode.jpg'.format(str(value))
 
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    name = db.Column(db.String(36))
+
+    def return_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+
 class Catagory(db.Model):
     __tablename__ = 'catagory'
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)

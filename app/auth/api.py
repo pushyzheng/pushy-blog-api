@@ -4,24 +4,18 @@ from app.models import Admin
 from flask import request
 from restful import *
 
-@auth.route('/login',methods=['POST','GET'])
+@auth.route('/login', methods=['POST'])
 @restful
 def admin():
-    if request.method == 'POST':
-        username = request.json.get('username')
-        password = request.json.get('password')
-        if not (username and password):
-            raise BadRequestError("The request body is not present")
-        admin = Admin.query.filter_by(username=username).first()
-        if admin is not None and admin.varify_password(password):
-            token = admin.generate_access_token()
-            return {
-                'access_token':token.decode('utf-8')
-            }
-        else:
-            raise UnauthorizedError("Invalid password or no this user")
-
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if not (username and password):
+        raise BadRequestError("The request body is not present")
+    admin = Admin.query.filter_by(username=username).first()
+    if admin is not None and admin.varify_password(password):
+        token = admin.generate_access_token()
+        return {
+            'access_token':token.decode('utf-8')
+        }
     else:
-        return jsonify(
-            error='Method Not Allowed.'
-        )
+        raise UnauthorizedError("Invalid password or no this user")
